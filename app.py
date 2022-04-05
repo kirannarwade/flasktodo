@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///todo.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -25,6 +26,7 @@ def hello_world():
         todo = Todo(title=title, desc=desc)
         db.session.add(todo)
         db.session.commit()
+        flash('Added Succesfully!')
         
     allTodo = Todo.query.all()
     return render_template('index.html', allTodo=allTodo)
@@ -45,6 +47,7 @@ def update(sno):
         todo.desc = desc
         db.session.add(todo)
         db.session.commit()
+        flash('Updated Successfully!')
         return redirect("/")
 
     todo = Todo.query.filter_by(sno=sno).first()
@@ -55,6 +58,7 @@ def delete(sno):
     todo = Todo.query.filter_by(sno=sno).first()
     db.session.delete(todo)
     db.session.commit()
+    flash('Deleted Successfully!')
     return redirect("/")
 
 @app.route('/about')
